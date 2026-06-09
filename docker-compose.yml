@@ -1,0 +1,43 @@
+# Поднимает бэкенд SKS Quest вместе с PostgreSQL одной командой:
+#   docker compose up --build
+#
+# Бэкенд при старте сам создаёт таблицы и засевает демо-данные
+# (лиги, ачивки, призы, квесты, тестовые пользователи).
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: sks_quest_db
+    environment:
+      POSTGRES_DB: sks_quest
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgre
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d sks_quest"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    container_name: sks_quest_backend
+    environment:
+      PORT: 5000
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: sks_quest
+      DB_USER: postgres
+      DB_PASSWORD: postgre
+      JWT_SECRET: change_me_in_production
+      CORS_ORIGIN: ""
+    ports:
+      - "5000:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:

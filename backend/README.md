@@ -163,9 +163,9 @@ curl -X POST http://localhost:5000/api/checkin/daily \
 ## Интеграция с мобильным приложением
 
 Flutter-приложение в `mobile/` уже подключено к этому API:
-- HTTP-клиент — `mobile/lib/services/api_service.dart` (адрес выбирается
-  автоматически: web → `localhost`, устройство → LAN-IP; переопределяется
-  через `--dart-define=API_BASE_URL=...`);
+- HTTP-клиент — `mobile/lib/services/api_service.dart` (адрес: web →
+  `localhost`, устройство/эмулятор → `10.0.2.2`; для реального телефона —
+  IP ПК через `--dart-define=API_BASE_URL=http://<IP>:5000/api`);
 - бизнес-логика — `mobile/lib/providers/app_provider.dart` ходит на эндпоинты
   выше и маппит ответы в модели;
 - вход: экран логина выбирает роль, под капотом приложение логинится под

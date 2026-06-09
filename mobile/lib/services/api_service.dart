@@ -15,10 +15,10 @@ class ApiException implements Exception {
 ///
 /// Базовый адрес выбирается автоматически:
 ///   • web                → http://localhost:5000/api
-///   • реальное устройство → IP этого ПК в Wi-Fi (см. ниже)
-/// Можно переопределить при сборке/запуске:
-///   flutter run --dart-define=API_BASE_URL=http://10.0.2.2:5000/api   (Android-эмулятор)
-///   flutter build apk --dart-define=API_BASE_URL=http://192.168.1.219:5000/api
+///   • устройство/эмулятор → http://10.0.2.2:5000/api
+/// Для реального телефона задайте IP вашего ПК при сборке/запуске:
+///   flutter run --dart-define=API_BASE_URL=http://192.168.1.219:5000/api
+///   flutter build apk --release --dart-define=API_BASE_URL=http://192.168.1.219:5000/api
 class ApiService {
   static const String _envBaseUrl = String.fromEnvironment('API_BASE_URL');
 
@@ -29,8 +29,10 @@ class ApiService {
     if (overrideBaseUrl != null) return overrideBaseUrl!;
     if (_envBaseUrl.isNotEmpty) return _envBaseUrl;
     if (kIsWeb) return 'http://localhost:5000/api';
-    // IP вашего ПК в локальной сети (телефон должен быть в той же Wi-Fi).
-    return 'http://192.168.1.219:5000/api';
+    // Дефолт для устройства — адрес хоста из Android-эмулятора (10.0.2.2).
+    // Для РЕАЛЬНОГО телефона укажите IP вашего ПК при сборке:
+    //   flutter build apk --release --dart-define=API_BASE_URL=http://<IP-ПК>:5000/api
+    return 'http://10.0.2.2:5000/api';
   }
 
   static String? _token;
